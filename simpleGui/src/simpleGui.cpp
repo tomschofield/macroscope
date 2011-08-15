@@ -12,7 +12,7 @@ void simpleGui::setup(int mx, int my, int mw, int mh, string mname, ofImage picm
     h=mh;
     name=mname;
     myCounter=0;
-    myfont.loadFont("verdana.ttf", 12, true);
+    myfont.loadFont(ofToDataPath("verdana.ttf"), 12, true);
     startPos=1;
     pic=picm;
     on =false;
@@ -29,18 +29,21 @@ void simpleGui::checkToggle(int tX, int tY){
 
 void simpleGui::drawButton(){
     ofSetLineWidth(1);
+
     if(on){
-    ofSetColor(255,0,100);
+        ofSetColor(0,170,203,150);
     }
-    else{
-        
-        ofSetColor(155,0,250);
+    else{  
+        ofSetColor(0,125,154,150);
     }
     ofFill();
-    //ofRect(x,y,w,h);
-    pic.draw(x,y);
-     ofSetColor(255);
-   // myfont.drawString(name,x,y+h+15);
+    ofRect(x,y,w,h);
+    //pic.draw(x,y);
+     ofSetColor(255,200);
+    ofNoFill();
+     ofRect(x-1,y-1,w+2,h+2);
+    
+    myfont.drawString(name,x,y+h+25);
     
     
 }

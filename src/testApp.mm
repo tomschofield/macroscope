@@ -3,19 +3,31 @@
 #include <fstream>
 
 ofxiPhoneKeyboard *keyboard;
+
+//TODO fix the links, add search, make circles smaller, make nicer buttons
 //--------------------------------------------------------------
 void testApp::setup(){	
 	// register touch events
 	ofRegisterTouchEvents(this);
+    
+    cout<<ofGetWidth()<<"width is\n";
 	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
 	NSString *documentsDirectory = [paths objectAtIndex:0];
-	
+	keyboardHasToggled=false;
+    previousKeyboardState=false;
 	const char* dirString = [documentsDirectory cStringUsingEncoding:NSASCIIStringEncoding];
     cout<<dirString<<" dir string \n";
 	// initialize the accelerometer
 	ofxAccelerometer.setup();
 	ofImage tempBut;
     tempBut.loadImage("titles.png");
+  
+//     ofRect(49, 30, 322, 36);
+    searchX=49;
+    searchY=30;
+    searchW=322;
+    searchH=36;
+    contextX=50;
     
     butPics.push_back(tempBut);
     tempBut.loadImage("words.png");
@@ -25,32 +37,38 @@ void testApp::setup(){
      butPics.push_back(tempBut);
     tempBut.loadImage("relocate.png");
      butPics.push_back(tempBut);
-    
+    font.loadFont(ofToDataPath("verdana.ttf"), 12, true);
     
 	//iPhoneAlerts will be sent to this.
 	ofxiPhoneAlerts.addListener(this);
-    string buttonNames[4]={"show titles", "show words","destroy", "relocate"};
+    string buttonNames[2]={"show titles", "show words"};
     float spacer=120;
-    for(int i=0;i<4;i++){
+    for(int i=0;i<2;i++){
     simpleGui tempButton;
         
-        tempButton.setup(10, 50+ (spacer*i), 200,100, buttonNames[i], butPics[i]);
+        tempButton.setup(50, spacer+50+ (spacer*i), 50,50, buttonNames[i], butPics[i]);
         buttons.push_back(tempButton);
     }
     
-	buttons[3].on=true;
+	//buttons[3].on=true;
 	//If you want a landscape oreintation 
-	iPhoneSetOrientation(OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT);
+	iPhoneSetOrientation(OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT);
 	
 	ofEnableAlphaBlending();
     ofEnableSmoothing();
     
-    for (int i = 0; i < sizeof(keyboards)/sizeof(*keyboards); i++)
+  /*  for (int i = 0; i < sizeof(keyboards)/sizeof(*keyboards); i++)
 	{
 		keyboards[i] = new ofxiPhoneKeyboard(0,52,320,32);
 		keyboard = *keyboards;
 		deviceOrientationChanged(i);
-	}
+	}*/
+    int keyboardWidth=320;
+    keyboard = new ofxiPhoneKeyboard( ofGetWidth()-keyboardWidth-50 ,ofGetHeight()-32,keyboardWidth,32);
+	keyboard->setVisible(false);
+	keyboard->setBgColor(0,170,203,100);
+	keyboard->setFontColor(255,255,255, 200);
+	keyboard->setFontSize(26);
  
     box2d.init();
 	box2d.setGravity(0, 0);
@@ -132,62 +150,90 @@ void testApp::setup(){
         for(int j=0; j<NUM_SHAPES; j++) {
             
             //dont draw a joint between a particle and itself
-           // if(i!=j){
+            if(i!=j){
                 ofxBox2dJoint joint;
                 joint.setWorld(box2d.getWorld());
-            //joint.indexOfJoint=indCount;
+                //joint.indexOfJoint=indCount;
                 float thisAttraction=particles[i].attractionForces[j];
                 joint.addJoint(circles[i].body, circles[j].body,.6,.9, true, ofMap(thisAttraction,0,30,0,20));
                 tempVec.push_back(joint);
                 joints.push_back(joint);
-            //}
+            }
             indCount++;
         }
         cout<<tempVec.size()<<"temo vec size\n";
        // joints1.push_back(tempVec);
         
     }
-  
+    for(int i=0;i<particles.size();i++){
+        particles[i].setupText();
+    }
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
     box2d.update();
+    contextX-=2;
+    //if the keyboard state has changed
+    if(previousKeyboardState!=keyboard->isKeyboardShowing()){
+        //to off
+        if(!keyboard->isKeyboardShowing()){
+            context="";
+            contextX=50;
+            searchString=keyboard->getLabelText();
+             cout<<searchString<<" searchString\n";
+                searchForWord();
+            // inititate search here!
+            
+        }
+        
+    }
+
+   
+    
     for (int i=0; i<NUM_SHAPES; i++) {
         particles[i].x=circles[i].getPosition().x;
         particles[i].y=circles[i].getPosition().y;
         
     }
   //  cout<<keyboard->getText()<<" key input\n";
-   }
+
+    previousKeyboardState=keyboard->isKeyboardShowing();
+}
 
 //--------------------------------------------------------------
 void testApp::draw(){
     ofBackground(0, 0, 0);
-    ofSetColor(255, 0, 0);
-   
-    //for(int i=0; i<3; i++) {
-    for(int i=0; i<joints.size(); i++) {
-        if (particles[i].alive==true) {
-           joints[i].draw();
-       }
-	}
-    
-    /*for(int i=0; i<joints1.size(); i++) {
-        for(int j=0; j<joints1[i].size(); j++) {
-           
-          //  joints1[i][j].draw();
-        }
-    }*/
+    ofPushStyle();
+    ofNoFill();
+    ofSetColor(255, 150);
+    ofRect(searchX,searchY, searchW,searchH);
+    font.drawString("enter search word", 50, 30+36+25);
+    font.drawString(context,contextX, 130);
+    ofPopStyle();
+    for(int i=0; i<particles.size(); i++) {
      
+        for(int j=0; j<particles.size();j++) {
+              float thisAttraction=particles[i].attractionForces[j];
+            ofSetLineWidth( ofMap(thisAttraction,0,30,0,15));
+             ofSetColor(100, 100, 100,ofMap(thisAttraction,0,30,0,120));
+             if (particles[i].alive==true&&particles[j].alive==true) {
+                 ofLine(particles[i].x, particles[i].y, particles[j].x, particles[j].y);
+             }
+            
+        }
+        
+    }
+     ofSetColor(255, 0, 0);
     for(int i=0; i<circles.size(); i++) {
        if (particles[i].alive==true) {
-           circles[i].draw();
-           ofSetColor(255, 0, 0);
+           //circles[i].draw();
+           particles[i].drawCircle();
+           ofSetColor(255,200);
                 //if(buttons[0].on){
                         //font.drawString(particles[i].title,circles[i].getPosition().x,circles[i].getPosition().y);
            if(buttons[0].on){
-           font.drawString(ofToString(i)+" "+particles[i].title,circles[i].getPosition().x,circles[i].getPosition().y);
+           font.drawString(particles[i].title,circles[i].getPosition().x,circles[i].getPosition().y);
                // }
          }
 	}
@@ -215,16 +261,22 @@ void testApp::exit(){
 
 //--------------------------------------------------------------
 void testApp::touchDown(ofTouchEventArgs &touch){
+    
+  //  if (touch.id == 1){
+    if(touch.x>searchX && touch.x<searchX+searchW && touch.y>searchY && touch.y<searchY+searchH){
+		if(!keyboard->isKeyboardShowing()){
+			keyboard->openKeyboard();
+			keyboard->setVisible(true);
+		}	
+		
+	}
+    
+    
     for(int i=0;i<buttons.size();i++){
         
     buttons[i].checkToggle(touch.x,touch.y);
     }
-    if (buttons[2].on) {
-        buttons[3].on=false;
-    }
-    if (buttons[3].on) {
-        buttons[2].on=false;
-    }
+   
 }
 
 //--------------------------------------------------------------
@@ -239,12 +291,14 @@ void testApp::touchUp(ofTouchEventArgs &touch){
 
 //--------------------------------------------------------------
 void testApp::touchDoubleTap(ofTouchEventArgs &touch){
-     if(buttons[2].on){
+    // if(buttons[2].on){
          
          //find nearest particle
          
          int minDist=2000000;
          int markedForDeath;
+         
+         //find the nearest particle
          for(int i=0;i<circles.size();i++){
              
              float thisDist=  ofDist(touch.x, touch.y, circles[i].getPosition().x,circles[i].getPosition().y );
@@ -257,7 +311,7 @@ void testApp::touchDoubleTap(ofTouchEventArgs &touch){
          
          
     
-    
+         particles[markedForDeath].alive=false;
     
     vector <ofxBox2dCircle>::iterator iter = circles.begin();
     
@@ -265,7 +319,9 @@ void testApp::touchDoubleTap(ofTouchEventArgs &touch){
     int count=0;
     vector <ofxBox2dJoint> tempJoints;
     int aliveCounter=0;
-    while (iter != circles.end()) {
+    
+         
+         while (iter != circles.end()) {
 		//iter->draw();
 		if (count==markedForDeath) {
             int thiscount=0;
@@ -304,7 +360,41 @@ void testApp::touchDoubleTap(ofTouchEventArgs &touch){
     cout<<joints.size()<<" is the size of joints\n";
     cout<<circles.size()<<" is the size of circles\n";
     
-     }
+     //}
+}
+
+//--------------------------------------------------------------
+void testApp::searchForWord(){
+    context="";
+    //for each particle
+    for(int i=0;i<particles.size();i++){
+        particles[i].hasSearchTerm=false;
+        if (particles[i].alive) {
+             //look in each sentence
+            for (int j=0; j<particles[i].textContent.size(); j++) {
+                //at each word
+                vector<string>thisSentence = ofSplitString(particles[i].textContent[j]," ");
+                for(int k=0;k<thisSentence.size();k++){
+                    if(searchString==thisSentence[k]){
+                        
+                        //add to hit list
+                        context+=particles[i].textContent[j]+" ";
+                        particles[i].hasSearchTerm=true;
+                    }
+                    
+                    
+                }
+                
+            }
+        
+   
+    
+    
+    
+    //if you get a match add to the hit list and mark that particle as bearing the mark
+        }
+    }
+    keyboard->setText("");
 }
 
 //--------------------------------------------------------------
@@ -324,7 +414,16 @@ void testApp::gotMemoryWarning(){
 
 //--------------------------------------------------------------
 void testApp::deviceOrientationChanged(int newOrientation){
-
+    cout<<newOrientation<<" new orientation \n";
+    switch(newOrientation){
+        case 3:
+                 ofxiPhoneSetOrientation(OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT);
+            break;
+        case 4:
+                   ofxiPhoneSetOrientation(OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT);
+            break;
+    }
+    keyboard->updateOrientation();
 }
 
 

@@ -10,6 +10,9 @@ void particle::setup(){
     myfont.loadFont("verdana.ttf", 12, true);
     startPos=1;
     alive=true;
+    
+    hasSearchTerm=false;
+    
 }
 ////////////////////////---------/////////////////////////////////////
 void particle::drawWords(){
@@ -17,6 +20,48 @@ void particle::drawWords(){
     
 }
 
+////////////////////////---------/////////////////////////////////////
+void particle::drawCircle(){
+    ofFill();
+    ofSetColor(0);
+    ofCircle(x, y, 27);
+   // ofNoFill();
+    if (hasSearchTerm) {
+       ofSetColor(0,170,203,150);
+    }
+    else{
+        
+        ofSetColor(200,200);
+
+    }
+    ofCircle(x, y, 27);
+    ofFill();
+    ofSetColor(0);
+    ofCircle(x, y, 22);
+    
+}
+void particle::setupText(){
+    string allWords="";
+    
+    string line;
+    string myPath=ofToDataPath(title)+".txt";
+    cout<<myPath<<" myPath\n";
+    ifstream myfile (myPath.c_str());
+    if (myfile.is_open())
+    {
+        while ( myfile.good() )
+        {
+            getline (myfile,line);
+            cout << line << endl;
+            //textContent.push_back(line);
+            allWords+=line+" ";
+            
+        }
+        myfile.close();
+    }
+    textContent=ofSplitString(allWords,".");
+    
+}
 void particle::displaySignifWords() {
     //if(alive) {
         //TODO reset to strart of array

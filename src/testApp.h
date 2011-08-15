@@ -8,6 +8,7 @@
 #include "ofxXmlSettings.h"
 #include "particle.h"
 #include "simpleGui.h"
+#include "customLines.h"
 
 #define NUM_SHAPES 10
 
@@ -30,6 +31,8 @@ public:
 	void gotMemoryWarning();
 	void deviceOrientationChanged(int newOrientation);
     
+    
+    void searchForWord();
     ofxBox2d						box2d;			  //	the box2d world
 	vector		<ofxBox2dCircle>	circles;		  //	default box2d circles
   //  vector		<ofxBox2dBaseShape>	shapes;		  //	default box2d circles
@@ -45,12 +48,16 @@ public:
     ofxXmlSettings xml;
     vector<particle> particles;
     vector<simpleGui> buttons;
-    
+    vector<customLines> lines;
   //  void buttonChooser(int x, int y, int w, int h, string name);
     int destRel;
-    
+    int searchX, searchY, searchW, searchH;
+    float contextX;
+    string searchString;
+    string context;
     vector <ofImage> butPics;
-    
+    bool keyboardHasToggled;
+    bool previousKeyboardState;
 
 };
 

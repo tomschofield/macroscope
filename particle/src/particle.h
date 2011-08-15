@@ -18,14 +18,18 @@ class particle{
     int x,y;
     ofTrueTypeFont myfont;
     vector<string> sigWords;
+    vector<string> textContent;
     vector<float>   attractionForces;
     string title;
     bool alive;
      int myCounter;
     int startPos;
     void drawWords();
+    void drawCircle();
     void setup();
     void displaySignifWords();
+    void setupText();
+    bool hasSearchTerm;
     //private:
    
     

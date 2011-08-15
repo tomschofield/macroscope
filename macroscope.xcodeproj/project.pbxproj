@@ -61,6 +61,7 @@
 		E290F58513CA240600ADD4DE /* b2PulleyJoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E290F54113CA240600ADD4DE /* b2PulleyJoint.cpp */; };
 		E290F58613CA240600ADD4DE /* b2RevoluteJoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E290F54313CA240600ADD4DE /* b2RevoluteJoint.cpp */; };
 		E290F58713CA240600ADD4DE /* ofxBox2d.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E290F54513CA240600ADD4DE /* ofxBox2d.cpp */; };
+		E295242013F9795300739B4A /* customLines.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E295241E13F9795300739B4A /* customLines.cpp */; };
 		E2D192AF13D9D11600F37401 /* simpleGui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2D192AD13D9D11600F37401 /* simpleGui.cpp */; };
 		E2DF690013D8B24A0013A34B /* particle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2DF68FE13D8B24A0013A34B /* particle.cpp */; };
 		E2EFF01E13D2E4A400BEBC59 /* install.xml in Resources */ = {isa = PBXBuildFile; fileRef = E2EFF01513D2E4A400BEBC59 /* install.xml */; };
@@ -216,6 +217,8 @@
 		E290F55A13CA240600ADD4DE /* ofxVec3f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxVec3f.h; sourceTree = "<group>"; };
 		E290F55B13CA240600ADD4DE /* ofxVec4f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxVec4f.h; sourceTree = "<group>"; };
 		E290F55C13CA240600ADD4DE /* ofxVectorMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxVectorMath.h; sourceTree = "<group>"; };
+		E295241E13F9795300739B4A /* customLines.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = customLines.cpp; sourceTree = "<group>"; };
+		E295241F13F9795300739B4A /* customLines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = customLines.h; sourceTree = "<group>"; };
 		E2D192AD13D9D11600F37401 /* simpleGui.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = simpleGui.cpp; sourceTree = "<group>"; };
 		E2D192AE13D9D11600F37401 /* simpleGui.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = simpleGui.h; sourceTree = "<group>"; };
 		E2DF68FE13D8B24A0013A34B /* particle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = particle.cpp; sourceTree = "<group>"; };
@@ -276,6 +279,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				E295241C13F9795300739B4A /* customLines */,
 				E2D192AB13D9D11600F37401 /* simpleGui */,
 				E2DF68FC13D8B24A0013A34B /* particle */,
 				E4D8936A11527B74007E1F53 /* src */,
@@ -581,6 +585,23 @@
 			path = src;
 			sourceTree = "<group>";
 		};
+		E295241C13F9795300739B4A /* customLines */ = {
+			isa = PBXGroup;
+			children = (
+				E295241D13F9795300739B4A /* src */,
+			);
+			path = customLines;
+			sourceTree = "<group>";
+		};
+		E295241D13F9795300739B4A /* src */ = {
+			isa = PBXGroup;
+			children = (
+				E295241E13F9795300739B4A /* customLines.cpp */,
+				E295241F13F9795300739B4A /* customLines.h */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
 		E2D192AB13D9D11600F37401 /* simpleGui */ = {
 			isa = PBXGroup;
 			children = (
@@ -814,6 +835,7 @@
 				E2EFF02213D2E4A400BEBC59 /* ofxXmlSettings.cpp in Sources */,
 				E2DF690013D8B24A0013A34B /* particle.cpp in Sources */,
 				E2D192AF13D9D11600F37401 /* simpleGui.cpp in Sources */,
+				E295242013F9795300739B4A /* customLines.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
